@@ -21,6 +21,12 @@
         path: "{{ local_ssh_pub_key_path }}"
       register: pub_key
 
+    - name: Ensure directory exists for SSH keys
+      ansible.builtin.file:
+        path: "{{ local_ssh_private_key_path | dirname }}"
+        state: directory
+      when: not pub_key.stat.exists
+
     - name: Generate SSH key pair if it does not exist
       ansible.builtin.shell:
         cmd: "ssh-keygen -t rsa -b 2048 -f {{ local_ssh_private_key_path }} -N ''"
