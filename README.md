@@ -4,7 +4,7 @@
 Ansible can only be run on UNIX-like machine with Python installed (e.g. Debian, Ubuntu, macOS). If you have a Windows environment, please install [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/install) and execute the commands in the WSL 2 shell.
 
 ### Install Ansible
-You should have Python 3 and pip installed. Ubuntu and Ubuntu-based distro users should skip to [pipx method](#pipx-method)
+You should have Python 3 and pip installed. Ubuntu and Ubuntu-based distro users should skip to [venv method](#venv-method)
 
 To check if you have Python 3 installed. You might need to use the ```python``` command instead of ```python3```, subject to execution environment:\
 ```python3 -V```
@@ -21,7 +21,7 @@ Confirm that Ansible has been installed correctly:\
 If you wish to upgrade the installed Ansible version in the future, run:\
 ```python3 -m pip install --upgrade --user ansible```
 
-#### pipx method
+#### venv method
 On certain Linux distros, you may see the following:
 ```
 error: externally-managed-environment
@@ -32,20 +32,22 @@ error: externally-managed-environment
     install.
 ...(truncated)
 ```
-In this case, you will need to use pipx to install Ansible
+In this case, you will need to use venv to install Ansible
 
-Install pipx:
+Create and activate venv:
 ```
-sudo apt install pipx
-pipx ensurepath
+python3 -m venv venv
+source venv/bin/activate
 ```
-Restart your terminal session for the PATH modification to take effect
 
 Install Ansible:\
-```pipx install --include-deps ansible```
+```pip install ansible```
+
+Confirm that Ansible has been installed correctly:\
+```ansible --version```
 
 If you wish to upgrade the installed Ansible version in the future, run:\
-```pipx upgrade --include-injected ansible```
+```pip install --upgrade --user ansible```
 
 ### Installing pre-requisite packages/collections
 To install the Ansible collections required:\
