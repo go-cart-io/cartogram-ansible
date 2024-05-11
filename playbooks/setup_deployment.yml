@@ -1,0 +1,48 @@
+- name: Create deploy-cartogram-cpp.sh
+  ansible.builtin.template:
+    src: templates/deploy-cartogram-cpp.sh.j2
+    dest: /home/cartogram/deploy-cartogram-cpp.sh
+    mode: '0744'
+
+- name: Create deploy.sh
+  ansible.builtin.template:
+    src: templates/deploy.sh.j2
+    dest: /home/cartogram/deploy.sh
+    mode: '0744'
+
+- name: Generate SSH key for GitHub Actions
+  ansible.builtin.shell:
+    cmd: "ssh-keygen -f github -N ''"
+    chdir: /home/cartogram
+
+- name: Pause for GitHub Personal Access Token input
+  ansible.builtin.pause:
+    prompt: "Please enter your GitHub Personal Access Token"
+  register: pat_input
+
+- name: Write the GitHub Personal Access Token to a file
+  ansible.builtin.lineinfile:
+    path: "/home/cartogram/.token"
+    line: "{{ pat_input.user_input }}"
+    mode: '0600'
+    create: yes
+
+- name: Update the GitHub secrets for repositories
+  ansible.builtin.shell:
+    cmd: "cat github | ghupdatesecret {{ item }} DEPLOY_SSH_KEY -u {{ github_username }} -p `cat .token`"
+    chdir: /home/cartogram
+  loop: "{{ github_repositories }}"
+
+- name: Install the public SSH key into authorized_keys
+  ansible.builtin.shell:
+    cmd: "mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && cat github.pub >> ~/.ssh/authorized_keys"
+    chdir: /home/cartogram
+
+- name: Clean up
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/home/cartogram/github"
+    - "/home/cartogram/github.pub"
+    - "/home/cartogram/.token"

@@ -1,0 +1,32 @@
+- name: Clone cartogram repositories
+  ansible.builtin.git:
+    repo: "{{ item.repo }}"
+    dest: "{{ item.dest }}"
+    version: "master"
+    accept_hostkey: yes
+  with_items:
+    - {
+        repo: "https://github.com/wind1337/cartogram-docker.git",
+        dest: "/home/cartogram/cartogram-docker",
+      }
+    - {
+        repo: "https://github.com/wind1337/cartogram-web.git",
+        dest: "/home/cartogram/cartogram-docker/cartogram-web",
+      }
+
+- name: Create .env file
+  ansible.builtin.template:
+    src: templates/env.j2
+    dest: /home/cartogram/cartogram-docker/.env
+    mode: '0644'
+
+- name: Create password.txt file
+  ansible.builtin.template:
+    src: templates/password.txt.j2
+    dest: /home/cartogram/cartogram-docker/password.txt
+    mode: '0644'
+
+- name: Bring up go-cart.io application using Docker Compose
+  ansible.builtin.command:
+    cmd: docker compose up -d
+    chdir: /home/cartogram/cartogram-docker

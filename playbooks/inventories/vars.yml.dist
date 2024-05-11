@@ -1,0 +1,17 @@
+domain_name:
+
+smtp_host:
+smtp_port:
+smtp_auth_required:
+smtp_user:
+smtp_password:
+smtp_from_email:
+smtp_destination:
+
+postgres_password:
+
+github_username:
+github_repositories:
+    - "{{ github_username }}/cartogram-web"
+    - "{{ github_username }}/cartogram-docker"
+    - "{{ github_username }}/cartogram-cpp"

@@ -1,0 +1,140 @@
+---
+- name: Deploy DigitalOcean Droplet
+  hosts: localhost
+  gather_facts: no
+  collections:
+    - digitalocean.cloud
+
+  vars:
+    do_token: "{{ lookup('env', 'DO_API_KEY') }}"
+    droplet_size: "s-2vcpu-2gb"
+    droplet_image: "ubuntu-22-04-x64"
+    droplet_region: "sgp1"
+    droplet_name: "cartogram-test"
+    ssh_key_name: "cartogram_key"
+    local_ssh_pub_key_path: "~/keys/do_cartogram_key.pub"
+    local_ssh_private_key_path: "~/keys/do_cartogram_key"
+
+  tasks:
+    - name: Check if local SSH public key file exists
+      ansible.builtin.stat:
+        path: "{{ local_ssh_pub_key_path }}"
+      register: pub_key
+
+    - name: Generate SSH key pair if it does not exist
+      ansible.builtin.shell:
+        cmd: "ssh-keygen -t rsa -b 2048 -f {{ local_ssh_private_key_path }} -N ''"
+        creates: "{{ local_ssh_pub_key_path }}"
+      when: not pub_key.stat.exists
+
+    - name: Read SSH public key
+      ansible.builtin.set_fact:
+        ssh_public_key: "{{ lookup('file', local_ssh_pub_key_path) }}"
+
+    - name: Check if SSH key exists in DigitalOcean
+      digitalocean.cloud.ssh_keys_info:
+        token: "{{ do_token }}"
+      register: ssh_key_info
+
+    - name: Create SSH key in DigitalOcean if not exists
+      digitalocean.cloud.ssh_key:
+        name: "{{ ssh_key_name }}"
+        public_key: "{{ ssh_public_key }}"
+        token: "{{ do_token }}"
+        state: present
+      when: ssh_key_info.ssh_keys | selectattr('name', 'equalto', ssh_key_name) | list | length == 0
+      register: new_ssh_key
+
+    - name: Create a new Droplet
+      digitalocean.cloud.droplet:
+        token: "{{ do_token }}"
+        name: "{{ droplet_name }}"
+        size: "{{ droplet_size }}"
+        image: "{{ droplet_image }}"
+        region: "{{ droplet_region }}"
+        ssh_keys:
+          - "{{ (new_ssh_key.ssh_key.id if new_ssh_key is defined and 'ssh_key' in new_ssh_key else (ssh_key_info.ssh_keys | selectattr('name', 'equalto', ssh_key_name) | map(attribute='id') | first)) }}"
+        state: present
+      register: new_droplet
+
+    - name: Get detailed droplet information to retrieve IP address
+      digitalocean.cloud.droplets_info:
+        oauth_token: "{{ do_token }}"
+      register: new_droplet_details
+
+    - name: Extract the Public IP Address from the droplet details
+      set_fact:
+        droplet_ip: "{{ (new_droplet_details.droplets | selectattr('id', 'equalto', new_droplet.droplet.id) | map(attribute='networks') | map(attribute='v4') | first | selectattr('type', 'equalto', 'public') | map(attribute='ip_address') | first) }}"
+
+    - name: Print IP Address of the Droplet
+      ansible.builtin.debug:
+        msg: "The IP address of the droplet is: {{ droplet_ip }}"
+
+    - name: Wait for SSH to be available
+      ansible.builtin.wait_for:
+        host: "{{ droplet_ip }}"
+        port: 22
+        delay: 10 # Initial delay in seconds before starting checks
+        timeout: 300 # Total time in seconds to wait for SSH to be available
+
+    - name: Add new droplet to host group
+      ansible.builtin.add_host:
+        name: "{{ droplet_ip }}"
+        groups: "launched"
+
+- name: Configure DigitalOcean Droplet
+  hosts: launched
+  become: yes
+  vars_files:
+    - ./inventories/vars.yml
+  vars:
+    key_path: "~/keys/do_cartogram_key"
+    ansible_ssh_private_key_file: "{{ key_path }}" # Path to the private key
+    ansible_user: root
+  tasks:
+    - name: Update DNS Records
+      ansible.builtin.pause:
+        prompt: 'Please update domain DNS records with IP Address: {{ ansible_ssh_host }}, press "Enter" to continue when record has been updated'
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Install aptitude
+      ansible.builtin.apt:
+        name: aptitude
+        state: latest
+        update_cache: true
+
+    - import_tasks: install_docker.yml
+
+    - name: Add cartogram user
+      ansible.builtin.user:
+        name: cartogram
+        group: docker
+        shell: /bin/bash
+        create_home: yes
+
+    - name: Install Python pip
+      ansible.builtin.apt:
+        name: python3-pip
+        state: present
+
+    - name: Install acl package # Required to 'become' unprivileged user
+      ansible.builtin.apt:
+        name: acl
+        state: present
+
+    - name: Install ghupdatesecret via pip
+      ansible.builtin.pip:
+        name: ghupdatesecret
+
+    - import_tasks: install_cartogram.yml
+      become: yes
+      become_user: cartogram
+
+    - import_tasks: install_nginx_certbot.yml
+
+    - import_tasks: setup_deployment.yml
+      become: yes
+      become_user: cartogram

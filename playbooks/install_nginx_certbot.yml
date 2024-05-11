@@ -1,0 +1,44 @@
+- name: Install nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+
+- name: Install Snapd
+  ansible.builtin.apt:
+    name: snapd
+    state: present
+
+- name: Install Certbot with Snap
+  ansible.builtin.command:
+    cmd: snap install --classic certbot
+
+- name: Create symlink for Certbot
+  ansible.builtin.file:
+    src: /snap/bin/certbot
+    dest: /usr/bin/certbot
+    state: link
+
+- name: Generate SSL certificate using Certbot
+  ansible.builtin.shell: >
+    certbot certonly --webroot -w /var/www/html --email {{ smtp_destination }}
+    -d {{ domain_name }} --agree-tos --non-interactive
+
+- name: Setup cronjob for certbot renewal
+  ansible.builtin.cron:
+    name: "Certbot Renewal"
+    minute: "17"
+    hour: "2"
+    job: "certbot renew"
+
+- name: Deploy Nginx configuration
+  ansible.builtin.template:
+    src: templates/nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Restart nginx
+  ansible.builtin.systemd:
+    name: nginx
+    state: restarted
