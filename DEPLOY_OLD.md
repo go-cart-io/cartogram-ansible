@@ -63,7 +63,7 @@ cd cartogram-docker
 git clone https://github.com/go-cart-io/cartogram-web
 ```
 
-**Create the .env file**
+**Create the .env file**\
 cp .env.dist .env
 
 Edit the ```.env``` file and fill it in with the following details:
@@ -76,6 +76,13 @@ Edit the ```.env``` file and fill it in with the following details:
 | CARTOGRAM_SMTP_PASSWORD | | Obtained from MailGun. If you are able to retrieve the existing password, a password reset can be avoided. |
 | CARTOGRAM_SMTP_FROM_EMAIL | ```"contactform@mg.go-cart.io"``` | Email sender displayed on email sent from MailGun |
 | CARTOGRAM_SMTP_DESTINATION | ```"support@go-cart.io"``` | Recipient of the email sent from MailGun |
+
+**Obtaining MailGun details**
+![mailgun_1](./images/mailgun_1.png)
+![mailgun_2](./images/mailgun_2.png)
+
+You will be able to copy the new mailgun password upon password reset at Step 6.
+
 
 **Set PostgreSQL password**\
 ```cp password.txt.dist password.txt```
