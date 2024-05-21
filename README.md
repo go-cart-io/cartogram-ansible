@@ -87,25 +87,23 @@ Next, execute the following command to source the .env file so that the token ca
 ## Deploying go-cart.io
 
 ### Configure Ansible variables
-The DigitalOcean droplet configuration terminology is not well documented, but we can determine the configuration values by simulating creating of a new droplet on their web portal and looking at the URL query string.
+We can use the following website to determine the technical jargon of the DigitalOcean API to define the droplet specifications: https://slugs.do-api.dev/
 
-![DO Droplet Config](./images/do_droplet_config.png)
-
-| Query String Value | Ansible Variable Value (digitalocean.yml) |
+| Website Term | Ansible Variable Value (digitalocean.yml) |
 | ------------------ | ---------------------- |
-| region | droplet_region |
-| size | droplet_size |
-| distroImage | droplet_image |
+| Regions | droplet_region |
+| Droplet Sizes | droplet_size |
+| Distro Images | droplet_image |
 
 Below are a few examples of values and what it corresponds to:
 
-**Region**
+**Regions**
 | Value | Meaning   |
 | ----- | --------- |
 | sgp1  | Singapore, Datacenter 1 |
 | sfo3  | San Francisco, Datacenter 3 |
 
-**Size (Droplet hardware specifications)**
+**Droplet Sizes (Droplet hardware specifications)**
 | Value | Meaning |
 | ----- | ------- |
 | s-2vcpu-4gb | Shared Regular CPU, 2 cores, 4GB RAM |
