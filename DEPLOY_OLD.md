@@ -56,7 +56,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 **Log on as 'cartogram' user**\
 ```su cartogram```
 
-**Clone cartogram-docker and cartogram-web**\
+**Clone cartogram-docker and cartogram-web**
 ```
 git clone https://github.com/go-cart-io/cartogram-docker
 cd cartogram-docker
