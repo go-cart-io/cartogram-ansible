@@ -34,6 +34,9 @@ error: externally-managed-environment
 ```
 In this case, you will need to use venv to install Ansible
 
+You might need to install the python venv package on Ubuntu:\
+```apt install python3.y-venv``` (replace 'y' with the Python 3 minor version installed on your OS)
+
 Create and activate venv:
 ```
 python3 -m venv venv
@@ -81,15 +84,22 @@ The token will now be displayed on screen.
 
 Copy the token and replace the placeholder ```DO_API_KEY``` value in ```.env``` with the generated token.
 
-Next, execute the following command to source the .env file so that the token can be accessible by Ansible\
+Example:
+```
+export DO_API_KEY="dop_v1_abc1234sdfg"
+```
+
+Next, execute the following command to source the .env file so that the token can be accessible by Ansible:\
 ```source .env```
 
 ## Deploying go-cart.io
 
-### Configure Ansible variables
+### Configure Ansible variables in digitalocean.yml
+We will need to define the Droplet specifications we will deploy in ```playbooks/digitalocean.yml```
+
 We can use the following website to determine the technical jargon of the DigitalOcean API to define the droplet specifications: https://slugs.do-api.dev/
 
-| Website Term | Ansible Variable Value (digitalocean.yml) |
+| Website Term | Ansible Variable Value (playbooks/digitalocean.yml) |
 | ------------------ | ---------------------- |
 | Regions | droplet_region |
 | Droplet Sizes | droplet_size |
@@ -120,7 +130,7 @@ Below are a few examples of values and what it corresponds to:
 Now that we have determined how to spec our DigitalOcean droplet, we can set the following vars in ```playbooks/digitalocean.yml```
 | Variable | Recommended Value | Remarks |
 | -------- | ----------------- | ------- |
-| droplet_size | ```s-4vcpu-8gb ```| |
+| droplet_size | ```s-2vcpu-4gb ```| |
 | droplet_image | ```ubuntu-24-04-x64``` | Or whatever is the latest Ubuntu LTS |
 | droplet_region | ```sgp1``` | |
 
@@ -129,6 +139,8 @@ This script will generate and save a SSH keypair for accessing the DigitalOcean 
 - local_ssh_private_key_path
 
 Alternatively if you wish to use your own existing SSH keypair, you can point these 2 variables to the location of your SSH public and private key.
+
+### Configure Ansible variables in vars.yml
 
 Next, we will set up other variables that will be used to configure the go-cart.io application.
 

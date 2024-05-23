@@ -7,8 +7,8 @@
 
   vars:
     do_token: "{{ lookup('env', 'DO_API_KEY') }}"
-    droplet_size: "s-2vcpu-2gb"
-    droplet_image: "ubuntu-22-04-x64"
+    droplet_size: "s-2vcpu-4gb"
+    droplet_image: "ubuntu-24-04-x64"
     droplet_region: "sgp1"
     droplet_name: "cartogram-test"
     ssh_key_name: "cartogram_key"
@@ -134,6 +134,8 @@
     - name: Install ghupdatesecret via pip
       ansible.builtin.pip:
         name: ghupdatesecret
+      environment:
+        PIP_BREAK_SYSTEM_PACKAGES: 1
 
     - import_tasks: install_cartogram.yml
       become: yes
