@@ -64,7 +64,7 @@ git clone https://github.com/go-cart-io/cartogram-web
 ```
 
 **Create the .env file**\
-cp .env.dist .env
+```cp .env.dist .env```
 
 Edit the ```.env``` file and fill it in with the following details:
 | Variable | Example Value | Remarks |
