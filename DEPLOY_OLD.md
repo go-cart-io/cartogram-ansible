@@ -154,7 +154,7 @@ pip install ghupdatesecret --break-system-packages
 ```
 
 ### Setting up automated deployment
-Make sure you are logged on as the ```cartogram``` user
+Make sure you are logged on as the ```cartogram``` user\
 ```su cartogram```
 
 **Change directory to /home/cartogram**\
