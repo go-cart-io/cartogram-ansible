@@ -133,7 +133,7 @@ Insert the following at the end of the file and save it:\
 ```17 2 * * * certbot renew```
 
 **Uploading Nginx config**\
-Open a new terminal window on your **local machine** and use ```scp``` to transfer the template Nginx config
+Open a new terminal window on your **local machine** and use ```scp``` to transfer the template Nginx config\
 SSH Key Authentication: ```scp -i /path/to/private_key nginx.conf root@127.0.0.1:/etc/nginx/nginx.conf```\
 Password Authentication: ```scp -i nginx.conf root@127.0.0.1:/etc/nginx/nginx.conf```\
 (replace 127.0.0.1 with your droplet IP)
