@@ -56,6 +56,9 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 **Log on as 'cartogram' user**\
 ```su cartogram```
 
+**Change directory to /home/cartogram**\
+```cd ~```
+
 **Clone cartogram-docker and cartogram-web**
 ```
 git clone https://github.com/go-cart-io/cartogram-docker
@@ -144,9 +147,18 @@ line 64: ```ssl_certificate_key /etc/letsencrypt/live/{{ domain_name }}/privkey.
 Save the file and restart nginx:\
 ```sudo systemctl restart nginx```
 
+**Install ghupdatesecret**
+```
+sudo apt install python3-pip
+pip install ghupdatesecret --break-system-packages
+```
+
 ### Setting up automated deployment
 Make sure you are logged on as the ```cartogram``` user
 ```su cartogram```
+
+**Change directory to /home/cartogram**\
+```cd ~```
 
 **Automated deployment for cartogram-cpp**\
 Create ```deploy-cartogram-cpp.sh``` in ```/home/cartogram``` with the following contents:
