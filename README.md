@@ -3,6 +3,11 @@
 ## Prerequisites
 Ansible can only be run on UNIX-like machine with Python installed (e.g. Debian, Ubuntu, macOS). If you have a Windows environment, please install [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/install) and execute the commands in the WSL 2 shell. The respository should already be cloned and commands will be executed in the repository directory.
 
+```
+git clone https://github.com/Wind1337/cartogram-ansible/
+cd cartogram-ansible
+```
+
 ### Install Ansible
 You should have Python 3 and pip installed. Ubuntu and Ubuntu-based distro users should skip to [venv method](#venv-method)
 
@@ -36,6 +41,8 @@ In this case, you will need to use venv to install Ansible
 
 You might need to install the python venv package on Ubuntu:\
 ```apt install python3.y-venv``` (replace 'y' with the Python 3 minor version installed on your OS)
+For Python 3.12:\
+```apt install python3.12-venv```
 
 Create and activate venv:
 ```
