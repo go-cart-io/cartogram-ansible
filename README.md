@@ -140,6 +140,7 @@ Now that we have determined how to spec our DigitalOcean droplet, we can set the
 | droplet_size | ```s-2vcpu-4gb ```| |
 | droplet_image | ```ubuntu-24-04-x64``` | Or whatever is the latest Ubuntu LTS |
 | droplet_region | ```sgp1``` | |
+| droplet_name | ```<any suitable name>``` | |
 
 This script will generate and save a SSH keypair for accessing the DigitalOcean droplet. You can change where the key is saved with the following vars:
 - local_ssh_pub_key_path
