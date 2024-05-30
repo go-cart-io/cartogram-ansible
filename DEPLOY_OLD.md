@@ -61,10 +61,11 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 
 **Clone cartogram-docker and cartogram-web**
 ```
-git clone https://github.com/go-cart-io/cartogram-docker
+git clone https://github.com/{{ github_repo_username }}/cartogram-docker
 cd cartogram-docker
-git clone https://github.com/go-cart-io/cartogram-web
+git clone https://github.com/{{ github_repo_username }}/cartogram-web
 ```
+(replace ```{{ github_repo_username }``` with the username hosting the respective repositories)
 
 **Create the .env file**\
 ```cp .env.dist .env```
