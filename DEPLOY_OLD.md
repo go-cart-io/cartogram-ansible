@@ -90,7 +90,7 @@ You will be able to copy the new mailgun password upon password reset at Step 6.
 **Set PostgreSQL password**\
 ```cp password.txt.dist password.txt```
 
-Edit passwords.txt with the PostgreSQL database password of your choice
+Edit password.txt with the PostgreSQL database password of your choice
 
 **Start cartogram-web**\
 ```docker compose up -d```
