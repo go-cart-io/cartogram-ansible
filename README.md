@@ -9,38 +9,23 @@ cd cartogram-ansible
 ```
 
 ### Install Ansible
-You should have Python 3 and pip installed. Ubuntu and Ubuntu-based distro users should skip to [venv method](#venv-method)
-
-To check if you have Python 3 installed. You might need to use the ```python``` command instead of ```python3```, subject to execution environment:\
-```python3 -V```
-
-To check if you have pip installed:\
-```python3 -m pip -V```
-
-If the requirements above are satisfied, we can install Ansible:\
-```python3 -m pip install --user ansible```
-
-Confirm that Ansible has been installed correctly:\
-```ansible --version```
-
-If you wish to upgrade the installed Ansible version in the future, run:\
-```python3 -m pip install --upgrade --user ansible```
+You should have Python 3 installed. We will use venv to install and execute Ansible
 
 #### venv method
-On certain Linux distros, you may see the following:
-```
-error: externally-managed-environment
 
-× This environment is externally managed
-╰─> To install Python packages system-wide, try apt install
-    python3-xyz, where xyz is the package you are trying to
-    install.
-...(truncated)
-```
-In this case, you will need to use venv to install Ansible
-
-You might need to install the python venv package on Ubuntu:\
+You might need to install the python venv package on **Ubuntu or Ubuntu-based distros**:\
 ```apt install python3.y-venv``` (replace 'y' with the Python 3 minor version installed on your OS)
+
+To get the python version:\
+```python -V```
+
+Example Output:
+```
+Python 3.10.6
+         ^^
+         minor version 10
+```
+
 For Python 3.12:\
 ```apt install python3.12-venv```
 
