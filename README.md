@@ -12,11 +12,7 @@ cd cartogram-ansible
 You should have Python 3 installed. We will use venv to install and execute Ansible
 
 #### venv method
-
-You might need to install the python venv package on **Ubuntu or Ubuntu-based distros**:\
-```apt install python3.y-venv``` (replace 'y' with the Python 3 minor version installed on your OS)
-
-To get the python version:\
+Check the python version:\
 ```python -V```
 
 Example Output:
@@ -25,6 +21,10 @@ Python 3.10.6
          ^^
          minor version 10
 ```
+
+You might need to install the python venv package on **Ubuntu or Ubuntu-based distros**:\
+(replace 'y' with the Python 3 minor version installed on your OS from the previous output)
+```apt install python3.y-venv```
 
 For Python 3.12:\
 ```apt install python3.12-venv```
@@ -74,7 +74,7 @@ The token will now be displayed on screen.
 
 ![Token](./images/token.png)
 
-Copy the token and replace the placeholder ```DO_API_KEY``` value in ```.env``` with the generated token.
+Copy the token and set the ```DO_API_KEY``` value in ```.env``` with the generated token.
 
 Example:
 ```
@@ -156,13 +156,13 @@ Modify ```playbooks/inventories/vars.yml``` with the following details:
 | github_username | ```"go-cart-io"``` | GitHub username of user hosting the cartogram-web, cartogram-docker and cartogram-cpp repositories. If a GitHub organisation is used or a different users are hosting the repositories, override the next variable. This user must have write access to these repositories. |
 
 **github_repositories**
+Replace ```{{ github_username }}``` with the corresponding github_username if required (e.g. ```mgastner```)
 ```
 github_repositories:
     - "{{ github_username }}/cartogram-web"
     - "{{ github_username }}/cartogram-docker"
     - "{{ github_username }}/cartogram-cpp"
 ```
-Replace ```{{ github_username }}``` with the corresponding github_username if required (e.g. ```mgastner```)
 
 **Obtaining MailGun details**
 ![mailgun_1](./images/mailgun_1.png)
@@ -177,7 +177,7 @@ With everything configured, we can now execute the deployment with\
 The execution will pause at certain stages where manual intervention is required.
 
 1. You will need to manually update the domain DNS records with the newly deployed DigitalOcean droplet's IP Address. The message in the console will show ```Please update domain DNS records with IP Address:```. Press the 'Enter' key to continue execution once this is done.
-2. You will need to generate a new GitHub personal access token to setup automated deployment.
+2. You will need to generate a new GitHub personal access token to setup automated deployment. Paste the token into the terminal when prompted.
 
 **Generating GitHub personal access token**
 1. Go to the settings of your GitHub Account
