@@ -23,7 +23,7 @@ Python 3.10.6
 ```
 
 You might need to install the python venv package on **Ubuntu or Ubuntu-based distros**:\
-(replace 'y' with the Python 3 minor version installed on your OS from the previous output)
+(replace 'y' with the Python 3 minor version installed on your OS from the previous output)\
 ```apt install python3.y-venv```
 
 For Python 3.12:\
