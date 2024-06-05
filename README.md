@@ -155,8 +155,8 @@ Modify ```playbooks/inventories/vars.yml``` with the following details:
 | postgres_password | ```"password"``` | Password for the PostgreSQL Database. As a new PostgreSQL database is installed, this password is defined by the user executing this script |
 | github_username | ```"go-cart-io"``` | GitHub username of user hosting the cartogram-web, cartogram-docker and cartogram-cpp repositories. If a GitHub organisation is used or a different users are hosting the repositories, override the next variable. This user must have write access to these repositories. |
 
-**github_repositories**
-Replace ```{{ github_username }}``` with the corresponding github_username if required (e.g. ```mgastner```)
+**github_repositories**\
+Replace ```{{ github_username }}``` with the corresponding github_username if required, if one of the repositories is hosted under a different username than what is defined in ```github_username```
 ```
 github_repositories:
     - "{{ github_username }}/cartogram-web"
