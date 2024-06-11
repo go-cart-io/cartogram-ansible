@@ -51,6 +51,16 @@
       when: ssh_key_info.ssh_keys | selectattr('name', 'equalto', ssh_key_name) | list | length == 0
       register: new_ssh_key
 
+    - name: Check if droplet with the same name exists
+      digitalocean.cloud.droplets_info:
+        oauth_token: "{{ do_token }}"
+      register: existing_droplets
+
+    - name: Set fact if droplet with the same name exists
+      set_fact:
+        existing_droplet: "{{ existing_droplets.droplets | selectattr('name', 'equalto', droplet_name) | first }}"
+      when: existing_droplets.droplets | selectattr('name', 'equalto', droplet_name) | list | length > 0
+
     - name: Create a new Droplet
       digitalocean.cloud.droplet:
         token: "{{ do_token }}"
@@ -61,7 +71,18 @@
         ssh_keys:
           - "{{ (new_ssh_key.ssh_key.id if new_ssh_key is defined and 'ssh_key' in new_ssh_key else (ssh_key_info.ssh_keys | selectattr('name', 'equalto', ssh_key_name) | map(attribute='id') | first)) }}"
         state: present
+      when: existing_droplet is not defined
       register: new_droplet
+
+    - name: Set fact for new droplet when created
+      set_fact:
+        droplet: "{{ new_droplet.droplet }}"
+      when: existing_droplet is not defined
+
+    - name: Use existing droplet fact when droplet already exists
+      set_fact:
+        droplet: "{{ existing_droplet }}"
+      when: existing_droplet is defined
 
     - name: Get detailed droplet information to retrieve IP address
       digitalocean.cloud.droplets_info:
@@ -70,7 +91,7 @@
 
     - name: Extract the Public IP Address from the droplet details
       set_fact:
-        droplet_ip: "{{ (new_droplet_details.droplets | selectattr('id', 'equalto', new_droplet.droplet.id) | map(attribute='networks') | map(attribute='v4') | first | selectattr('type', 'equalto', 'public') | map(attribute='ip_address') | first) }}"
+        droplet_ip: "{{ (new_droplet_details.droplets | selectattr('id', 'equalto', droplet.id) | map(attribute='networks') | map(attribute='v4') | first | selectattr('type', 'equalto', 'public') | map(attribute='ip_address') | first) }}"
 
     - name: Print IP Address of the Droplet
       ansible.builtin.debug:
