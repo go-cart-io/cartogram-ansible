@@ -4,7 +4,7 @@
 Ansible can only be run on UNIX-like machine with Python installed (e.g. Debian, Ubuntu, macOS). If you have a Windows environment, please install [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/install) and execute the commands in the WSL 2 shell. The respository should already be cloned and commands will be executed in the repository directory.
 
 ```
-git clone https://github.com/Wind1337/cartogram-ansible/
+git clone https://github.com/go-cart-io/cartogram-ansible/
 cd cartogram-ansible
 ```
 
