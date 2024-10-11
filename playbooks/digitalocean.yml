@@ -1,7 +1,7 @@
 ---
 - name: Deploy DigitalOcean Droplet
   hosts: localhost
-  gather_facts: no
+  gather_facts: false
   collections:
     - digitalocean.cloud
 
@@ -10,7 +10,7 @@
     droplet_size: "s-2vcpu-4gb"
     droplet_image: "ubuntu-24-04-x64"
     droplet_region: "sgp1"
-    droplet_name: "cartogram-test"
+    droplet_name: "beta-go-cart-io"
     ssh_key_name: "cartogram_key"
     local_ssh_pub_key_path: "~/keys/do_cartogram_key.pub"
     local_ssh_private_key_path: "~/keys/do_cartogram_key"
@@ -111,7 +111,7 @@
 
 - name: Configure DigitalOcean Droplet
   hosts: launched
-  become: yes
+  become: true
   vars_files:
     - ./inventories/vars.yml
   vars:
@@ -125,7 +125,7 @@
 
     - name: Update apt cache
       ansible.builtin.apt:
-        update_cache: yes
+        update_cache: true
 
     - name: Install aptitude
       ansible.builtin.apt:
@@ -140,7 +140,7 @@
         name: cartogram
         group: docker
         shell: /bin/bash
-        create_home: yes
+        create_home: true
 
     - name: Install Python pip
       ansible.builtin.apt:
@@ -159,11 +159,11 @@
         PIP_BREAK_SYSTEM_PACKAGES: 1
 
     - import_tasks: install_cartogram.yml
-      become: yes
+      become: true
       become_user: cartogram
 
     - import_tasks: install_nginx_certbot.yml
 
     - import_tasks: setup_deployment.yml
-      become: yes
+      become: true
       become_user: cartogram
