@@ -76,7 +76,7 @@ Modify ```playbooks/inventories/vars.yml``` with the following details:
 | smtp_from_email | ```"contactform@mg.go-cart.io"``` | Email sender displayed on email sent from MailGun |
 | smtp_destination | ```"support@go-cart.io"``` | Recipient of the email sent from MailGun |
 | postgres_password | ```"password"``` | Password for the PostgreSQL Database. As a new PostgreSQL database is installed, this password is defined by the user executing this script |
-| github_username | ```"go-cart-io"``` | GitHub username of user hosting the cartogram-web and cartogram-docker repositories. |
+| github_username | ```"mgastner"``` | GitHub username (not organization name) of user with write access to relevant go-cart repositories (cartogram-docker, cartogram-web, cartogram-cpp). |
 
 More is explained about the Digital Ocean variables in the next step.
 

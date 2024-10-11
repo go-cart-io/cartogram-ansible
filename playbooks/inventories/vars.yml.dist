@@ -18,8 +18,8 @@ postgres_password:
 # GitHub Repository to install from
 github_username:
 github_repositories:
-    - "{{ github_username }}/cartogram-web"
-    - "{{ github_username }}/cartogram-docker"
+    - "go-cart-io/cartogram-web"
+    - "go-cart-io/cartogram-docker"
     - "mgastner/cartogram-cpp"
 
 # Digital Ocean Droplet Specs
