@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Fetch the latest release information from GitHub API
-release_info=$(curl -s https://api.github.com/repos/Wind1337/cartogram-cpp/releases/latest)
+release_info=$(curl -s https://api.github.com/repos/mgastner/cartogram-cpp/releases/latest)
 
 # Extract the release tag name
 release_tag=$(echo $release_info | jq -r '.tag_name')
