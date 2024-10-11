@@ -53,11 +53,40 @@ The digitalocean Ansible collection requires additional Python libraries to run 
 To install the Python libraries required:\
 ```pip install -r requirements.txt```
 
-### Setting DigitalOcean API key
-First, create the .env file from the template\
-```cp .env.dist .env```
+## Deploying go-cart.io
 
-Next, login to your DigitalOcean Account and go to the "API" page
+### Configure Ansible variables in vars.yml
+
+Next, we will set up other variables that will be used to configure the go-cart.io application.
+
+Copy vars.yml.dist to vars.yml, like so:
+
+    cp playbooks/inventories/vars.yml.dist playbooks/inventories/vars.yml
+
+Modify ```playbooks/inventories/vars.yml``` with the following details:
+| Variable | Example Value | Remarks |
+| -------- | ------------- | ------- |
+| do_token | ```"dop_v1_abc1234sdfg"``` | Cloud Services API token (Obtained from Digital Ocean) |
+| domain_name | ```"go-cart.io"``` | Domain name used for the web server |
+| smtp_host | ```"smtp.mailgun.org"``` | SMTP server host name (Obtained from MailGun) |
+| smtp_port | ```587``` | SMTP server port (Obtained from MailGun) |
+| smtp_auth_required | ```"TRUE"```| Set to true when we require a username and password to send emails via MailGun |
+| smtp_user | ```"contactform@mg.go-cart.io"``` | Obtained from MailGun |
+| smtp_password | | Obtained from MailGun. If you are able to retrieve the existing password, a password reset can be avoided. |
+| smtp_from_email | ```"contactform@mg.go-cart.io"``` | Email sender displayed on email sent from MailGun |
+| smtp_destination | ```"support@go-cart.io"``` | Recipient of the email sent from MailGun |
+| postgres_password | ```"password"``` | Password for the PostgreSQL Database. As a new PostgreSQL database is installed, this password is defined by the user executing this script |
+| github_username | ```"go-cart-io"``` | GitHub username of user hosting the cartogram-web and cartogram-docker repositories. |
+
+**Obtaining MailGun details**
+![mailgun_1](./images/mailgun_1.png)
+![mailgun_2](./images/mailgun_2.png)
+
+You will be able to copy the new mailgun password upon password reset at Step 6.
+
+**Obtaining Digital Ocean Token**
+
+Login to your DigitalOcean Account and go to the "API" page
 
 ![API Sidebar](./images/api_sidebar.png)
 
@@ -73,18 +102,6 @@ Grant the token "Full Access" and generate the token.
 The token will now be displayed on screen.
 
 ![Token](./images/token.png)
-
-Copy the token and set the ```DO_API_KEY``` value in ```.env``` with the generated token.
-
-Example:
-```
-export DO_API_KEY="dop_v1_abc1234sdfg"
-```
-
-Next, execute the following command to source the .env file so that the token can be accessible by Ansible:\
-```source .env```
-
-## Deploying go-cart.io
 
 ### Configure Ansible variables in digitalocean.yml
 We will need to define the Droplet specifications we will deploy in ```playbooks/digitalocean.yml```
@@ -132,43 +149,6 @@ This script will generate and save a SSH keypair for accessing the DigitalOcean 
 - local_ssh_private_key_path
 
 Alternatively if you wish to use your own existing SSH keypair, you can point these 2 variables to the location of your SSH public and private key.
-
-### Configure Ansible variables in vars.yml
-
-Next, we will set up other variables that will be used to configure the go-cart.io application.
-
-Run the following\
-```cp playbooks/inventories/vars.yml.dist playbooks/inventories/vars.yml```\
-to initialise the variables file.
-
-Modify ```playbooks/inventories/vars.yml``` with the following details:
-| Variable | Example Value | Remarks |
-| -------- | ------------- | ------- |
-| domain_name | ```"go-cart.io"``` | Domain name used for the web server |
-| smtp_host | ```"smtp.mailgun.org"``` | SMTP server host name (Obtained from MailGun) |
-| smtp_port | ```587``` | SMTP server port (Obtained from MailGun) |
-| smtp_auth_required | ```"TRUE"```| Set to true when we require a username and password to send emails via MailGun |
-| smtp_user | ```"contactform@mg.go-cart.io"``` | Obtained from MailGun |
-| smtp_password | | Obtained from MailGun. If you are able to retrieve the existing password, a password reset can be avoided. |
-| smtp_from_email | ```"contactform@mg.go-cart.io"``` | Email sender displayed on email sent from MailGun |
-| smtp_destination | ```"support@go-cart.io"``` | Recipient of the email sent from MailGun |
-| postgres_password | ```"password"``` | Password for the PostgreSQL Database. As a new PostgreSQL database is installed, this password is defined by the user executing this script |
-| github_username | ```"go-cart-io"``` | GitHub username of user hosting the cartogram-web, cartogram-docker and cartogram-cpp repositories. If a GitHub organisation is used or a different users are hosting the repositories, override the next variable. This user must have write access to these repositories. |
-
-**github_repositories**\
-Replace ```{{ github_username }}``` with the corresponding github_username if required, if one of the repositories is hosted under a different username than what is defined in ```github_username```
-```
-github_repositories:
-    - "{{ github_username }}/cartogram-web"
-    - "{{ github_username }}/cartogram-docker"
-    - "{{ github_username }}/cartogram-cpp"
-```
-
-**Obtaining MailGun details**
-![mailgun_1](./images/mailgun_1.png)
-![mailgun_2](./images/mailgun_2.png)
-
-You will be able to copy the new mailgun password upon password reset at Step 6.
 
 ### Executing Ansible Playbook
 With everything configured, we can now execute the deployment with\
