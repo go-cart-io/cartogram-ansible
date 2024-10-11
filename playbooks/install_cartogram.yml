@@ -4,14 +4,12 @@
     dest: "{{ item.dest }}"
     version: "master"
     accept_hostkey: yes
+    clone: "--recurse-submodules"
+
   with_items:
     - {
-        repo: "https://github.com/wind1337/cartogram-docker.git",
+        repo: "https://github.com/go-cart-io/cartogram-docker.git",
         dest: "/home/cartogram/cartogram-docker",
-      }
-    - {
-        repo: "https://github.com/wind1337/cartogram-web.git",
-        dest: "/home/cartogram/cartogram-docker/cartogram-web",
       }
 
 - name: Create .env file

@@ -7,15 +7,6 @@
   vars_files:
     - ./inventories/vars.yml
 
-  vars:
-    droplet_size: "s-2vcpu-4gb"
-    droplet_image: "ubuntu-24-04-x64"
-    droplet_region: "sgp1"
-    droplet_name: "beta-go-cart-io"
-    ssh_key_name: "cartogram_key"
-    local_ssh_pub_key_path: "~/keys/do_cartogram_key.pub"
-    local_ssh_private_key_path: "~/keys/do_cartogram_key"
-
   tasks:
     - name: Check if local SSH public key file exists
       ansible.builtin.stat:
