@@ -78,6 +78,8 @@ Modify ```playbooks/inventories/vars.yml``` with the following details:
 | postgres_password | ```"password"``` | Password for the PostgreSQL Database. As a new PostgreSQL database is installed, this password is defined by the user executing this script |
 | github_username | ```"go-cart-io"``` | GitHub username of user hosting the cartogram-web and cartogram-docker repositories. |
 
+More is explained about the Digital Ocean variables in the next step.
+
 **Obtaining MailGun details**
 ![mailgun_1](./images/mailgun_1.png)
 ![mailgun_2](./images/mailgun_2.png)
@@ -103,8 +105,9 @@ The token will now be displayed on screen.
 
 ![Token](./images/token.png)
 
-### Configure Ansible variables in digitalocean.yml
-We will need to define the Droplet specifications we will deploy in ```playbooks/digitalocean.yml```
+### Configure Ansible variables in vars.yml
+
+In the same file, we will need to define the Droplet specifications.
 
 We can use the following website to determine the technical jargon of the DigitalOcean API to define the droplet specifications: https://slugs.do-api.dev/
 
@@ -148,9 +151,10 @@ This script will generate and save a SSH keypair for accessing the DigitalOcean 
 - local_ssh_pub_key_path
 - local_ssh_private_key_path
 
-Alternatively if you wish to use your own existing SSH keypair, you can point these 2 variables to the location of your SSH public and private key.
+Alternatively if you wish to use your own existing SSH keypair, you can point these 2 variables to the location of your SSH public and private key. You need to do this in case you plan to use a keypair that already exists under your Digital Ocean project.
 
 ### Executing Ansible Playbook
+
 With everything configured, we can now execute the deployment with\
 ```ansible-playbook playbooks/digitalocean.yml```
 

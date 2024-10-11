@@ -1,5 +1,6 @@
 domain_name:
 
+# Contact form service (likely MailGun)
 smtp_host:
 smtp_port:
 smtp_auth_required:
@@ -7,12 +8,25 @@ smtp_user:
 smtp_password:
 smtp_from_email:
 smtp_destination:
+
+# Cloud Service Provider API Token (provided by Digital Ocean in this case)
 do_token:
 
+# New password for postgres (can be left blank if so desired)
 postgres_password:
 
+# GitHub Repository to install from
 github_username:
 github_repositories:
     - "{{ github_username }}/cartogram-web"
     - "{{ github_username }}/cartogram-docker"
     - "mgastner/cartogram-cpp"
+
+# Digital Ocean Droplet Specs
+droplet_size: "s-2vcpu-4gb"
+droplet_image: "ubuntu-24-04-x64"
+droplet_region: "sgp1"
+droplet_name: "beta-go-cart-io"
+ssh_key_name: "cartogram_key"
+local_ssh_pub_key_path: "~/keys/do_cartogram_key.pub"
+local_ssh_private_key_path: "~/keys/do_cartogram_key"
