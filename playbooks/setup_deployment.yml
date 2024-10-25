@@ -1,15 +1,3 @@
-- name: Create deploy-cartogram-cpp.sh
-  ansible.builtin.template:
-    src: templates/deploy-cartogram-cpp.sh.j2
-    dest: /home/cartogram/deploy-cartogram-cpp.sh
-    mode: '0744'
-
-- name: Create deploy.sh
-  ansible.builtin.template:
-    src: templates/deploy.sh.j2
-    dest: /home/cartogram/deploy.sh
-    mode: '0744'
-
 - name: Generate SSH key for GitHub Actions
   ansible.builtin.shell:
     cmd: "ssh-keygen -f github -N ''"

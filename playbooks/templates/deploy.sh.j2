@@ -1,7 +1,0 @@
-#!/bin/sh
-
-cd /home/cartogram/cartogram-docker
-git pull || exit 1
-docker compose down
-docker compose pull || exit 1
-docker compose up -d || exit 1

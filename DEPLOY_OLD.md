@@ -161,37 +161,6 @@ Make sure you are logged on as the ```cartogram``` user\
 **Change directory to /home/cartogram**\
 ```cd ~```
 
-**Automated deployment for cartogram-cpp**\
-Create ```deploy-cartogram-cpp.sh``` in ```/home/cartogram``` with the following contents:
-```
-#!/bin/bash
-
-# Download the latest cartogram binary release
-wget -O /home/cartogram/cartogram-docker/cartogram-web/internal/lambda_package/cartogram https://github.com/{{ github_repo_username }}/cartogram-cpp/releases/latest/download/cartogram
-
-# Give it execute permissions
-chmod +x /home/cartogram/cartogram-docker/cartogram-web/internal/lambda_package/cartogram
-```
-Replace ```{{ github_repo_username }}``` with the GitHub username hosting the cartogram-cpp code
-
-Grant the file execute permissions:\
-```chmod +x /home/cartogram/deploy-cartogram-cpp.sh```
-
-**Automated deployment for cartogram-web**\
-Create ```deploy.sh``` in ```/home/cartogram``` with the following contents:
-```
-#!/bin/sh
-
-cd /home/cartogram/cartogram-docker
-git pull || exit 1
-docker compose down
-docker compose pull || exit 1
-docker compose up -d || exit 1
-```
-
-Grant the file execute permissions:\
-```chmod +x /home/cartogram/deploy.sh```
-
 **Generate SSH Key for GitHub Actions**\
 Execute the following command to generate a SSH Keypair for GitHub Actions to access the server to execute the 2 scripts we have created:
 ```ssh-keygen -f github -N ''```
