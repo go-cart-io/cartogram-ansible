@@ -1,2 +1,3 @@
 .env
 playbooks/inventories/vars.yml
+.DS_Store
