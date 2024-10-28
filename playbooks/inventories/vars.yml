@@ -2,8 +2,8 @@ domain_name:
 
 # Contact form service (likely MailGun)
 smtp_host:
-smtp_port:
-smtp_auth_required:
+smtp_port: 25
+smtp_auth_required: true
 smtp_user:
 smtp_password:
 smtp_from_email:
@@ -16,7 +16,7 @@ do_token:
 postgres_password:
 
 # GitHub Repository to install from
-github_username:
+github_username: adisidev
 github_repositories:
     - "go-cart-io/cartogram-web"
     - "go-cart-io/cartogram-docker"
@@ -26,7 +26,7 @@ github_repositories:
 droplet_size: "s-2vcpu-4gb"
 droplet_image: "ubuntu-24-04-x64"
 droplet_region: "sgp1"
-droplet_name: "beta-go-cart-io"
+droplet_name: "adi-beta-go-cart-io"
 ssh_key_name: "cartogram_key"
 local_ssh_pub_key_path: "~/keys/do_cartogram_key.pub"
 local_ssh_private_key_path: "~/keys/do_cartogram_key"
