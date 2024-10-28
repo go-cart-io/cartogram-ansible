@@ -59,10 +59,6 @@ To install the Python libraries required:\
 
 Next, we will set up other variables that will be used to configure the go-cart.io application.
 
-Copy vars.yml.dist to vars.yml, like so:
-
-    cp playbooks/inventories/vars.yml.dist playbooks/inventories/vars.yml
-
 Modify ```playbooks/inventories/vars.yml``` with the following details:
 | Variable | Example Value | Remarks |
 | -------- | ------------- | ------- |
@@ -77,6 +73,8 @@ Modify ```playbooks/inventories/vars.yml``` with the following details:
 | smtp_destination | ```"support@go-cart.io"``` | Recipient of the email sent from MailGun |
 | postgres_password | ```"password"``` | Password for the PostgreSQL Database. As a new PostgreSQL database is installed, this password is defined by the user executing this script |
 | github_username | ```"mgastner"``` | GitHub username (not organization name) of user with write access to relevant go-cart repositories (cartogram-docker, cartogram-web, cartogram-cpp). |
+
+Note: `vars.yml` is purposely not tracked as the values should not be commited to github (as they may contain secrets). If you add more variables (without values) and would like to commit `vars.yml`, please add it manually.
 
 More is explained about the Digital Ocean variables in the next step.
 
