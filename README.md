@@ -36,7 +36,9 @@ source venv/bin/activate
 ```
 
 Install Ansible:\
-```pip install ansible```
+```
+pip install ansible
+```
 
 Confirm that Ansible has been installed correctly:\
 ```ansible --version```
@@ -46,12 +48,16 @@ If you wish to upgrade the installed Ansible version in the future, run:\
 
 ### Installing pre-requisite packages/collections
 To install the Ansible collections required:\
-```ansible-galaxy collection install -r requirements.yml```
+```
+ansible-galaxy collection install -r requirements.yml
+```
 
 The digitalocean Ansible collection requires additional Python libraries to run (documented [here](https://github.com/digitalocean/ansible-collection?tab=readme-ov-file#external-requirements)). You might need to check the documentation if the requirements have been updated and update ```requirements.txt``` accordingly.
 
 To install the Python libraries required:\
-```pip install -r requirements.txt```
+```
+pip install -r requirements.txt
+```
 
 ### Getting API Access Tokens (to be set later)
 
@@ -156,7 +162,9 @@ Alternatively if you wish to use your own existing SSH keypair, you can point th
 ### Executing Ansible Playbook
 
 With everything configured, we can now execute the deployment with\
-```ansible-playbook playbooks/digitalocean.yml```
+```
+ansible-playbook playbooks/digitalocean.yml
+```
 
 The execution will pause at certain stages where manual intervention is required.
 
