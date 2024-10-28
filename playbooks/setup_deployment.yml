@@ -15,11 +15,23 @@
     mode: '0600'
     create: yes
 
-- name: Update the GitHub secrets for repositories
+# Update GitHub secrets for go-cart-io/cartogram-docker
+- name: Update SERVER_SSH_ACCESS_KEY in go-cart-io/cartogram-docker's GitHub secrets
   ansible.builtin.shell:
-    cmd: "cat github | ghupdatesecret {{ item }} DEPLOY_SSH_KEY -u {{ github_username }} -p `cat .token`"
+    cmd: "cat github | ghupdatesecret "go-cart-io/cartogram-docker" SERVER_SSH_ACCESS_KEY -u {{ github_username }} -p `cat .token`"
     chdir: /home/cartogram
   loop: "{{ github_repositories }}"
+
+-  name: Update SERVER_HOSTNAME in go-cart-io/cartogram-docker's GitHub secrets
+  ansible.builtin.shell:
+    cmd: "echo {{ ansible_ssh_host }} | ghupdatesecret "go-cart-io/cartogram-docker" SERVER_HOSTNAME -u {{ github_username }} -p `cat .token`"
+    chdir: /home/cartogram
+  loop: "{{ github_repositories }}"
+
+-  name: Update SERVER_USERNAME in go-cart-io/cartogram-docker's GitHub secrets
+  ansible.builtin.shell:
+    cmd: "echo "cartogram" | ghupdatesecret "go-cart-io/cartogram-docker" SERVER_USERNAME -u {{ github_username }} -p `cat .token`"
+    chdir: /home/cartogram
 
 - name: Install the public SSH key into authorized_keys
   ansible.builtin.shell:

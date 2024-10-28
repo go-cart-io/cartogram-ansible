@@ -53,30 +53,7 @@ The digitalocean Ansible collection requires additional Python libraries to run 
 To install the Python libraries required:\
 ```pip install -r requirements.txt```
 
-## Deploying go-cart.io
-
-### Configure Ansible variables in vars.yml
-
-Next, we will set up other variables that will be used to configure the go-cart.io application.
-
-Modify ```playbooks/inventories/vars.yml``` with the following details:
-| Variable | Example Value | Remarks |
-| -------- | ------------- | ------- |
-| do_token | ```"dop_v1_abc1234sdfg"``` | Cloud Services API token (Obtained from Digital Ocean) |
-| domain_name | ```"go-cart.io"``` | Domain name used for the web server |
-| smtp_host | ```"smtp.mailgun.org"``` | SMTP server host name (Obtained from MailGun) |
-| smtp_port | ```587``` | SMTP server port (Obtained from MailGun) |
-| smtp_auth_required | ```"TRUE"```| Set to true when we require a username and password to send emails via MailGun |
-| smtp_user | ```"contactform@mg.go-cart.io"``` | Obtained from MailGun |
-| smtp_password | | Obtained from MailGun. If you are able to retrieve the existing password, a password reset can be avoided. |
-| smtp_from_email | ```"contactform@mg.go-cart.io"``` | Email sender displayed on email sent from MailGun |
-| smtp_destination | ```"support@go-cart.io"``` | Recipient of the email sent from MailGun |
-| postgres_password | ```"password"``` | Password for the PostgreSQL Database. As a new PostgreSQL database is installed, this password is defined by the user executing this script |
-| github_username | ```"mgastner"``` | GitHub username (not organization name) of user with write access to relevant go-cart repositories (cartogram-docker, cartogram-web, cartogram-cpp). |
-
-Note: `vars.yml` is purposely not tracked as the values should not be commited to github (as they may contain secrets). If you add more variables (without values) and would like to commit `vars.yml`, please add it manually.
-
-More is explained about the Digital Ocean variables in the next step.
+### Getting API Access Tokens (to be set later)
 
 **Obtaining MailGun details**
 ![mailgun_1](./images/mailgun_1.png)
@@ -103,7 +80,32 @@ The token will now be displayed on screen.
 
 ![Token](./images/token.png)
 
+## Deploying go-cart.io
+
 ### Configure Ansible variables in vars.yml
+
+Next, we will set up other variables that will be used to configure the go-cart.io application.
+
+Modify ```playbooks/inventories/vars.yml``` with the following details:
+| Variable | Example Value | Remarks |
+| -------- | ------------- | ------- |
+| do_token | ```"dop_v1_abc1234sdfg"``` | Cloud Services API token (Obtained from Digital Ocean) |
+| domain_name | ```"go-cart.io"``` | Domain name used for the web server |
+| smtp_host | ```"smtp.mailgun.org"``` | SMTP server host name (Obtained from MailGun) |
+| smtp_port | ```587``` | SMTP server port (Obtained from MailGun) |
+| smtp_auth_required | ```"TRUE"```| Set to true when we require a username and password to send emails via MailGun |
+| smtp_user | ```"contactform@mg.go-cart.io"``` | Obtained from MailGun |
+| smtp_password | | Obtained from MailGun. If you are able to retrieve the existing password, a password reset can be avoided. |
+| smtp_from_email | ```"contactform@mg.go-cart.io"``` | Email sender displayed on email sent from MailGun |
+| smtp_destination | ```"support@go-cart.io"``` | Recipient of the email sent from MailGun |
+| postgres_password | ```"password"``` | Password for the PostgreSQL Database. As a new PostgreSQL database is installed, this password is defined by the user executing this script |
+| github_username | ```"mgastner"``` | GitHub username (not organization name) of user with write access to relevant go-cart repositories (cartogram-docker, cartogram-web, cartogram-cpp). |
+
+Note: `vars.yml` is purposely not tracked as the values should not be commited to github (as they may contain secrets). If you add more variables (without values) and would like to commit `vars.yml`, please add it manually.
+
+More is explained about the Digital Ocean variables in the next step.
+
+### Configure Digital Ocean droplet variables in vars.yml
 
 In the same file, we will need to define the Droplet specifications.
 
@@ -159,7 +161,7 @@ With everything configured, we can now execute the deployment with\
 The execution will pause at certain stages where manual intervention is required.
 
 1. You will need to manually update the domain DNS records with the newly deployed DigitalOcean droplet's IP Address. The message in the console will show ```Please update domain DNS records with IP Address:```. Press the 'Enter' key to continue execution once this is done.
-2. You will need to generate a new GitHub personal access token to setup automated deployment. Paste the token into the terminal when prompted.
+2. You will need to generate a new GitHub personal access token to setup automated deployment. This will need to be a person's token who has the permission to change GitHub secrets on `go-cart-io/cartogram-docker`. Paste the token into the terminal when prompted. Below are instructions on how to get the token.
 
 **Generating GitHub personal access token**
 1. Go to the settings of your GitHub Account
