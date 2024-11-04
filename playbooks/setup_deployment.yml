@@ -1,48 +1,63 @@
-- name: Generate SSH key for GitHub Actions
-  ansible.builtin.shell:
-    cmd: "ssh-keygen -f github -N ''"
-    chdir: /home/cartogram
+- name: Check if SSH key exists
+  ansible.builtin.stat:
+    path: /home/cartogram/github
+  register: ssh_key
 
-- name: Pause for GitHub Personal Access Token input
-  ansible.builtin.pause:
-    prompt: "Please enter your GitHub Personal Access Token"
-  register: pat_input
+- name: Create SSH key and upload, if it does not already exist
+  block:
+  - name: Generate SSH key for GitHub Actions
+    ansible.builtin.command:
+      cmd: "ssh-keygen -t rsa -b 4096 -f /home/cartogram/github -N ''"
+    args:
+      creates: /home/cartogram/github
+    become: true
+    become_user: cartogram
+    when: not ssh_key.stat.exists
 
-- name: Write the GitHub Personal Access Token to a file
-  ansible.builtin.lineinfile:
-    path: "/home/cartogram/.token"
-    line: "{{ pat_input.user_input }}"
-    mode: '0600'
-    create: yes
 
-# Update GitHub secrets for go-cart-io/cartogram-docker
-- name: Update SERVER_SSH_ACCESS_KEY in go-cart-io/cartogram-docker's GitHub secrets
-  ansible.builtin.shell:
-    cmd: "cat github | ghupdatesecret "go-cart-io/cartogram-docker" SERVER_SSH_ACCESS_KEY -u {{ github_username }} -p `cat .token`"
-    chdir: /home/cartogram
-  loop: "{{ github_repositories }}"
+  - name: Pause for GitHub Personal Access Token input
+    ansible.builtin.pause:
+      prompt: "Please enter your GitHub Personal Access Token"
+    register: pat_input
 
--  name: Update SERVER_HOSTNAME in go-cart-io/cartogram-docker's GitHub secrets
-  ansible.builtin.shell:
-    cmd: "echo {{ ansible_ssh_host }} | ghupdatesecret "go-cart-io/cartogram-docker" SERVER_HOSTNAME -u {{ github_username }} -p `cat .token`"
-    chdir: /home/cartogram
-  loop: "{{ github_repositories }}"
+  - name: Write the GitHub Personal Access Token to a file
+    ansible.builtin.lineinfile:
+      path: "/home/cartogram/.token"
+      line: "{{ pat_input.user_input }}"
+      mode: '0600'
+      create: yes
 
--  name: Update SERVER_USERNAME in go-cart-io/cartogram-docker's GitHub secrets
-  ansible.builtin.shell:
-    cmd: "echo "cartogram" | ghupdatesecret "go-cart-io/cartogram-docker" SERVER_USERNAME -u {{ github_username }} -p `cat .token`"
-    chdir: /home/cartogram
+  # Update GitHub secrets for go-cart-io/cartogram-docker
+  - name: Update SERVER_SSH_ACCESS_KEY in go-cart-io/cartogram-docker's GitHub secrets
+    ansible.builtin.shell:
+      cmd: "cat github | ghupdatesecret go-cart-io/cartogram-docker SERVER_SSH_ACCESS_KEY -u {{ github_username }} -p `cat .token`"
+      chdir: /home/cartogram
 
-- name: Install the public SSH key into authorized_keys
-  ansible.builtin.shell:
-    cmd: "mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && cat github.pub >> ~/.ssh/authorized_keys"
-    chdir: /home/cartogram
+  - name: Update SERVER_HOSTNAME in go-cart-io/cartogram-docker's GitHub secrets
+    ansible.builtin.shell:
+      cmd: "echo {{ ansible_ssh_host }} | ghupdatesecret go-cart-io/cartogram-docker SERVER_HOSTNAME -u {{ github_username }} -p `cat .token`"
+      chdir: /home/cartogram
 
-- name: Clean up
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: absent
-  loop:
-    - "/home/cartogram/github"
-    - "/home/cartogram/github.pub"
-    - "/home/cartogram/.token"
+  - name: Update SERVER_USERNAME in go-cart-io/cartogram-docker's GitHub secrets
+    ansible.builtin.shell:
+      cmd: "echo root | ghupdatesecret go-cart-io/cartogram-docker SERVER_USERNAME -u {{ github_username }} -p `cat .token`"
+      chdir: /home/cartogram
+
+  - name: Install the public SSH key into authorized_keys for root
+    ansible.builtin.shell:
+      cmd: "mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && cat github.pub >> ~/.ssh/authorized_keys"
+
+  - name: Install the public SSH key into authorized_keys for cartogram
+    ansible.builtin.shell:
+      cmd: "mkdir -p /home/cartogram/.ssh && touch /home/cartogram/.ssh/authorized_keys && chmod 600 /home/cartogram/.ssh/authorized_keys && cat github.pub >> /home/cartogram/.ssh/authorized_keys"
+
+  - name: Clean up
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: absent
+    loop:
+      - "/home/cartogram/github"
+      - "/home/cartogram/github.pub"
+      - "/home/cartogram/.token"
+
+  when: not ssh_key.stat.exists
