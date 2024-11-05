@@ -4,7 +4,7 @@
     dest: "{{ item.dest }}"
     version: "master"
     accept_hostkey: yes
-    clone: "--recurse-submodules"
+    recursive: yes
 
   with_items:
     - {
