@@ -107,7 +107,8 @@
   vars_files:
     - ./inventories/vars.yml
   vars:
-    key_path: "~/keys/do_cartogram_key"
+    key_path: "{{ local_ssh_private_key_path }}"
+    pub_key_path: "{{ local_ssh_pub_key_path }}"
     ansible_ssh_private_key_file: "{{ key_path }}" # Path to the private key
     ansible_user: root
   tasks:
@@ -133,6 +134,12 @@
         group: docker
         shell: /bin/bash
         create_home: true
+
+    - name: Add SSH key to cartogram user
+      ansible.builtin.authorized_key:
+        user: cartogram
+        state: present
+        key: "{{ lookup('file', local_ssh_pub_key_path) }}"
 
     - name: Install Python pip
       ansible.builtin.apt:
