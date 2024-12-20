@@ -112,9 +112,25 @@
     ansible_ssh_private_key_file: "{{ key_path }}" # Path to the private key
     ansible_user: root
   tasks:
-    - name: Update DNS Records
-      ansible.builtin.pause:
-        prompt: 'Please update domain DNS records with IP Address: {{ ansible_ssh_host }}, press "Enter" to continue when record has been updated'
+
+    - name: Check if we've previously completed this step
+      ansible.builtin.stat:
+        path: /usr/local/etc/.breadcrumb_dns_record_updated
+      register: breadcrumb_dns_record
+
+    - block:
+
+      - name: Update DNS Records
+        ansible.builtin.pause:
+          prompt: 'Please update domain DNS records with IP Address: {{ ansible_ssh_host }}, press "Enter" to continue when record has been updated'
+
+
+      - name: Create marker file to indicate DNS record update
+        ansible.builtin.file:
+          path: /usr/local/etc/.breadcrumb_dns_record_updated
+          state: touch
+
+      when: not breadcrumb_dns_record.stat.exists
 
     - name: Update apt cache
       ansible.builtin.apt:
