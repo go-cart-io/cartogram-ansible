@@ -1,12 +1,18 @@
 - name: Check if we've previously completed this step
   ansible.builtin.stat:
-    path: /home/cartogram/.breadcrumb
-  register: breadcrumb
+    path: /usr/local/etc/.breadcrumb_gh_secrets_updated
+  register: breadcrumb_gh_secrets_updated
 
 - name: Create SSH key and upload
 
   block:
 
+  - name: Pause for GitHub Personal Access Token input
+    ansible.builtin.pause:
+      prompt: "Please enter your GitHub Personal Access Token"
+    register: gh_pat
+
+  # Generate and install key into host
   -  name: Generate SSH key pair for GitHub Actions
      ansible.builtin.openssh_keypair:
        path: /home/cartogram/tmp_ghactions_key
@@ -15,10 +21,11 @@
        state: present
      register: ssh_keypair
 
-  - name: Pause for GitHub Personal Access Token input
-    ansible.builtin.pause:
-      prompt: "Please enter your GitHub Personal Access Token"
-    register: gh_pat
+  -  name: Install the public SSH key into authorized_keys for cartogram
+     ansible.builtin.authorized_key:
+       user: cartogram
+       state: present
+       key: "{{ ssh_keypair.public_key }}"
 
   # Update GitHub secrets for go-cart-io/cartogram-docker
   - name: Update SERVER_SSH_ACCESS_KEY in go-cart-io/cartogram-docker's GitHub secrets
@@ -29,16 +36,6 @@
     ansible.builtin.shell:
       cmd: "echo {{ ansible_ssh_host }} | ghupdatesecret go-cart-io/cartogram-docker SERVER_HOSTNAME -u {{ github_username }} -p {{ gh_pat.user_input }}"
 
-  - name: Update SERVER_USERNAME in go-cart-io/cartogram-docker's GitHub secrets
-    ansible.builtin.shell:
-      cmd: "echo cartogram | ghupdatesecret go-cart-io/cartogram-docker SERVER_USERNAME -u {{ github_username }} -p {{ gh_pat.user_input }}"
-
-  -  name: Install the public SSH key into authorized_keys for cartogram
-     ansible.builtin.authorized_key:
-       user: cartogram
-       state: present
-       key: "{{ ssh_keypair.public_key }}"
-
   - name: Clean up
     ansible.builtin.file:
       path: "{{ item }}"
@@ -48,8 +45,9 @@
       - "/home/cartogram/tmp_ghactions_key.pub"
 
   - name: Create marker file to indicate SSH key setup completion
+    become_user: root
     ansible.builtin.file:
-      path: /home/cartogram/.breadcrumb
+      path: /usr/local/etc/.breadcrumb_gh_secrets_updated
       state: touch
 
-  when: not breadcrumb.stat.exists
+  when: not breadcrumb_gh_secrets_updated.stat.exists
