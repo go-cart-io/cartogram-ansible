@@ -13,8 +13,8 @@ smtp_destination: personal@gmail.com
 # Cloud Service Provider API Token (provided by Digital Ocean in this case)
 do_token: dop_v1_abcdefghijklmnopqrstuvwxyz12345678900987654321zxywvutsrqponmlkji
 
-# New password for postgres (can be left blank during testing)
-postgres_password:
+# New password for postgres (must not be empty, even if only testing)
+postgres_password: test1234
 
 # GitHub Repository to install from
 github_username: adisidev
