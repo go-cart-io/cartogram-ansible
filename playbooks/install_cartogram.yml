@@ -2,9 +2,9 @@
   ansible.builtin.git:
     repo: "{{ item.repo }}"
     dest: "{{ item.dest }}"
-    version: "master"
+    version: "main"
     accept_hostkey: yes
-    recursive: yes
+    recursive: no
 
   with_items:
     - {
