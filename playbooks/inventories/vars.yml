@@ -10,6 +10,9 @@ smtp_password: "mailgun_password"
 smtp_from_email: cartogram@test.com
 smtp_destination: personal@gmail.com
 
+google_analytics_id:
+cartogram_secret_key:
+
 # Cloud Service Provider API Token (provided by Digital Ocean in this case)
 do_token: dop_v1_abcdefghijklmnopqrstuvwxyz12345678900987654321zxywvutsrqponmlkji
 
