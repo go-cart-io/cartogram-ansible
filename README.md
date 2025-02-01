@@ -1,6 +1,7 @@
 # go-cart.io deployment using Ansible
 
 ## Prerequisites
+
 Ansible can only be run on UNIX-like machine with Python installed (e.g. Debian, Ubuntu, macOS). If you have a Windows environment, please install [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/install) and execute the commands in the WSL 2 shell. The respository should already be cloned and commands will be executed in the repository directory.
 
 ```
@@ -9,13 +10,16 @@ cd cartogram-ansible
 ```
 
 ### Install Ansible
+
 You should have Python 3 installed. We will use venv to install and execute Ansible
 
 #### venv method
+
 Check the python version:\
-```python -V```
+`python -V`
 
 Example Output:
+
 ```
 Python 3.10.6
          ^^
@@ -24,37 +28,42 @@ Python 3.10.6
 
 You might need to install the python venv package on **Ubuntu or Ubuntu-based distros**:\
 (replace 'y' with the Python 3 minor version installed on your OS from the previous output)\
-```apt install python3.y-venv```
+`apt install python3.y-venv`
 
 For Python 3.12:\
-```apt install python3.12-venv```
+`apt install python3.12-venv`
 
 Create and activate venv:
+
 ```
 python3 -m venv venv
 source venv/bin/activate
 ```
 
 Install Ansible:\
+
 ```
 pip install ansible
 ```
 
 Confirm that Ansible has been installed correctly:\
-```ansible --version```
+`ansible --version`
 
 If you wish to upgrade the installed Ansible version in the future, run:\
-```pip install --upgrade --user ansible```
+`pip install --upgrade --user ansible`
 
 ### Installing pre-requisite packages/collections
+
 To install the Ansible collections required:\
+
 ```
 ansible-galaxy collection install -r requirements.yml
 ```
 
-The digitalocean Ansible collection requires additional Python libraries to run (documented [here](https://github.com/digitalocean/ansible-collection?tab=readme-ov-file#external-requirements)). You might need to check the documentation if the requirements have been updated and update ```requirements.txt``` accordingly.
+The digitalocean Ansible collection requires additional Python libraries to run (documented [here](https://github.com/digitalocean/ansible-collection?tab=readme-ov-file#external-requirements)). You might need to check the documentation if the requirements have been updated and update `requirements.txt` accordingly.
 
 To install the Python libraries required:\
+
 ```
 pip install -r requirements.txt
 ```
@@ -92,20 +101,20 @@ The token will now be displayed on screen.
 
 Next, we will set up other variables that will be used to configure the go-cart.io application.
 
-Modify ```playbooks/inventories/vars.yml``` with the following details:
+Modify `playbooks/inventories/vars.yml` with the following details:
 | Variable | Example Value | Remarks |
 | -------- | ------------- | ------- |
-| do_token | ```"dop_v1_abc1234sdfg"``` | Cloud Services API token (Obtained from Digital Ocean) |
-| domain_name | ```"go-cart.io"``` | Domain name used for the web server |
-| smtp_host | ```"smtp.mailgun.org"``` | SMTP server host name (Obtained from MailGun) |
-| smtp_port | ```587``` | SMTP server port (Obtained from MailGun) |
-| smtp_auth_required | ```"TRUE"```| Set to true when we require a username and password to send emails via MailGun |
-| smtp_user | ```"contactform@mg.go-cart.io"``` | Obtained from MailGun |
+| do_token | `"dop_v1_abc1234sdfg"` | Cloud Services API token (Obtained from Digital Ocean) |
+| domain_name | `"go-cart.io"` | Domain name used for the web server |
+| smtp_host | `"smtp.mailgun.org"` | SMTP server host name (Obtained from MailGun) |
+| smtp_port | `587` | SMTP server port (Obtained from MailGun) |
+| smtp_auth_required | `"TRUE"`| Set to true when we require a username and password to send emails via MailGun |
+| smtp_user | `"contactform@mg.go-cart.io"` | Obtained from MailGun |
 | smtp_password | | Obtained from MailGun. If you are able to retrieve the existing password, a password reset can be avoided. |
-| smtp_from_email | ```"contactform@mg.go-cart.io"``` | Email sender displayed on email sent from MailGun |
-| smtp_destination | ```"support@go-cart.io"``` | Recipient of the email sent from MailGun |
-| postgres_password | ```"password"``` | Password for the PostgreSQL Database. As a new PostgreSQL database is installed, this password is defined by the user executing this script |
-| github_username | ```"mgastner"``` | GitHub username (not organization name) of user with write access to relevant go-cart repositories (cartogram-docker, cartogram-web, cartogram-cpp). |
+| smtp_from_email | `"contactform@mg.go-cart.io"` | Email sender displayed on email sent from MailGun |
+| smtp_destination | `"support@go-cart.io"` | Recipient of the email sent from MailGun |
+| postgres_password | `"password"` | Password for the PostgreSQL Database. As a new PostgreSQL database is installed, this password is defined by the user executing this script |
+| github_username | `"mgastner"` | GitHub username (not organization name) of user with write access to relevant go-cart repositories (cartogram-docker, cartogram-web, cartogram-cpp). |
 
 Note: `vars.yml` is purposely not tracked as the values should not be commited to github (as they may contain secrets). If you add more variables (without values) and would like to commit `vars.yml`, please add it manually.
 
@@ -117,19 +126,19 @@ In the same file, we will need to define the Droplet specifications.
 
 We can use the following website to determine the technical jargon of the DigitalOcean API to define the droplet specifications: https://slugs.do-api.dev/
 
-| Website Term | Ansible Variable Value (playbooks/digitalocean.yml) |
-| ------------------ | ---------------------- |
-| Regions | droplet_region |
-| Droplet Sizes | droplet_size |
-| Distro Images | droplet_image |
+| Website Term  | Ansible Variable Value (playbooks/digitalocean.yml) |
+| ------------- | --------------------------------------------------- |
+| Regions       | droplet_region                                      |
+| Droplet Sizes | droplet_size                                        |
+| Distro Images | droplet_image                                       |
 
 Below are a few examples of values and what it corresponds to:
 
 **Regions**
-| Value | Meaning   |
+| Value | Meaning |
 | ----- | --------- |
-| sgp1  | Singapore, Datacenter 1 |
-| sfo3  | San Francisco, Datacenter 3 |
+| sgp1 | Singapore, Datacenter 1 |
+| sfo3 | San Francisco, Datacenter 3 |
 
 **Droplet Sizes (Droplet hardware specifications)**
 | Value | Meaning |
@@ -145,43 +154,48 @@ Below are a few examples of values and what it corresponds to:
 | ubuntu-24-04-x64 | Ubuntu 24.04 x64 |
 | debian-12-x64 | Debian 12 x64 |
 
-Now that we have determined how to spec our DigitalOcean droplet, we can set the following vars in ```playbooks/digitalocean.yml```
+Now that we have determined how to spec our DigitalOcean droplet, we can set the following vars in `playbooks/digitalocean.yml`
 | Variable | Recommended Value | Remarks |
 | -------- | ----------------- | ------- |
-| droplet_size | ```s-2vcpu-4gb ```| |
-| droplet_image | ```ubuntu-24-04-x64``` | Or whatever is the latest Ubuntu LTS |
-| droplet_region | ```sgp1``` | |
-| droplet_name | ```<any suitable name>``` | |
+| droplet_size | `s-2vcpu-4gb `| |
+| droplet_image | `ubuntu-24-04-x64` | Or whatever is the latest Ubuntu LTS |
+| droplet_region | `sgp1` | |
+| droplet_name | `<any suitable name>` | |
 
 This script will generate and save a SSH keypair for accessing the DigitalOcean droplet. You can change where the key is saved with the following vars:
+
 - local_ssh_pub_key_path
 - local_ssh_private_key_path
 
-Alternatively if you wish to use your own existing SSH keypair, you can point these 2 variables to the location of your SSH public and private key. You need to do this in case you plan to use a keypair that already exists under your Digital Ocean project.
+You must define the vars `ssh_key_name` that does not already exist in your Digital Ocean project. For example, in the case shown in the image, the name cannot be `cartogram_key`. Alternatively if you wish to use your own existing SSH keypair, you can point these 2 variables to the location of your SSH public and private key. You need to do this in case you plan to use a keypair that already exists under your Digital Ocean project.
+
+![public_key](./images/public_key.png)
 
 ### Executing Ansible Playbook
 
 With everything configured, we can now execute the deployment with\
+
 ```
 ansible-playbook playbooks/digitalocean.yml
 ```
 
 The execution will pause at certain stages where manual intervention is required.
 
-1. You will need to manually update the domain DNS records with the newly deployed DigitalOcean droplet's IP Address. The message in the console will show ```Please update domain DNS records with IP Address:```. Press the 'Enter' key to continue execution once this is done.
+1. You will need to manually update the domain DNS records with the newly deployed DigitalOcean droplet's IP Address. The message in the console will show `Please update domain DNS records with IP Address:`. Press the 'Enter' key to continue execution once this is done.
 2. You will need to generate a new GitHub personal access token to setup automated deployment. This will need to be a person's token who has the permission to change GitHub secrets on `go-cart-io/cartogram-docker`. Paste the token into the terminal when prompted. Below are instructions on how to get the token.
 
 **Generating GitHub personal access token**
+
 1. Go to the settings of your GitHub Account
-![github_1](./images/github_1.png)
-![github_2](./images/github_2.png)
+   ![github_1](./images/github_1.png)
+   ![github_2](./images/github_2.png)
 2. Scroll down and click on "Developer Settings"
-![github_3](./images/github_3.png)
+   ![github_3](./images/github_3.png)
 3. Click on "Personal access tokens" > "Tokens (classic)" > "Generate new token" > "Generate new token (classic)"
-![github_4](./images/github_4.png)
+   ![github_4](./images/github_4.png)
 4. Give the token a memorable name. As this token will be used only for 1 time, the token can be set to expire any time you like. Grant the token the full "repo" access scope
-![github_5](./images/github_5.png)
+   ![github_5](./images/github_5.png)
 5. Scroll down and click on "Generate token"
-![github_6](./images/github_6.png)
+   ![github_6](./images/github_6.png)
 6. The token will be displayed on screen. Copy the token.
-![github_7](./images/github_7.png)
+   ![github_7](./images/github_7.png)
