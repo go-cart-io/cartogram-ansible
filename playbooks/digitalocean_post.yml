@@ -1,0 +1,70 @@
+---
+- name: Configure nginx
+  hosts: all
+  become: true
+  vars_files:
+    - ./inventories/vars.yml
+  tasks:
+  - import_tasks: install_nginx_certbot.yml
+
+  - name: Ensure openssl is installed
+    package:
+      name: openssl
+      state: present
+
+  - name: Generate Diffie-Hellman parameters
+    command: openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 2048
+
+  - name: Copy certbot Nginx configuration
+    copy:
+      src: templates/options-ssl-nginx.conf
+      dest: /etc/letsencrypt/options-ssl-nginx.conf
+      owner: root
+      group: root
+      mode: '0644'     
+
+  - name: Deploy Nginx configuration
+    ansible.builtin.template:
+      src: templates/nginx.conf.j2
+      dest: /etc/nginx/nginx.conf
+      owner: root
+      group: root
+      mode: '0644'  
+
+  - name: Remove default nginx configuration
+    file:
+      path: /etc/nginx/sites-enabled/default
+      state: absent
+
+  - name: Add nginx configuration
+    ansible.builtin.template:
+      src: templates/go-cart.j2
+      dest: /etc/nginx/sites-available/go-cart
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: Enable website configuration
+    file:
+      src: /etc/nginx/sites-available/go-cart
+      dest: /etc/nginx/sites-enabled/go-cart
+      state: link      
+
+  - name: Add nginx configuration
+    ansible.builtin.template:
+      src: templates/go-cart-ssl.j2
+      dest: /etc/nginx/sites-available/go-cart-ssl
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: Enable website configuration
+    file:
+      src: /etc/nginx/sites-available/go-cart-ssl
+      dest: /etc/nginx/sites-enabled/go-cart-ssl
+      state: link
+
+  - name: Restart nginx
+    ansible.builtin.systemd:
+      name: nginx
+      state: restarted

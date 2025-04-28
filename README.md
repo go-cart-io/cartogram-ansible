@@ -1,5 +1,21 @@
 # go-cart.io deployment using Ansible
 
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+   - [Install Ansible](#install-ansible)
+      - [venv method](#venv-method)
+   - [Installing pre-requisite packages/collections](#installing-pre-requisite-packagescollections)
+   - [Getting API Access Tokens (to be set later)](#getting-api-access-tokens-to-be-set-later)
+      - [Obtaining MailGun details](#obtaining-mailgun-details)
+      - [Obtaining Digital Ocean Token](#obtaining-digital-ocean-token)
+- [Deploying go-cart.io](#deploying-go-cartio)
+   - [Configure Ansible variables in vars.yml](#configure-ansible-variables-in-varsyml)
+   - [Configure Digital Ocean droplet variables in vars.yml](#configure-digital-ocean-droplet-variables-in-varsyml)
+   - [Executing Ansible Playbook](#executing-ansible-playbook)
+      - [Generating GitHub personal access token](#generating-github-personal-access-token)
+- [Run post installation playbook](#run-post-installation-playbook)
+
 ## Prerequisites
 
 Ansible can only be run on UNIX-like machine with Python installed (e.g. Debian, Ubuntu, macOS). If you have a Windows environment, please install [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/install) and execute the commands in the WSL 2 shell. The respository should already be cloned and commands will be executed in the repository directory.
@@ -36,8 +52,8 @@ For Python 3.12:\
 Create and activate venv:
 
 ```
-python3 -m venv venv
-source venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
 Install Ansible:\
@@ -199,3 +215,21 @@ The execution will pause at certain stages where manual intervention is required
    ![github_6](./images/github_6.png)
 6. The token will be displayed on screen. Copy the token.
    ![github_7](./images/github_7.png)
+
+## Run post installation playbook
+
+1. Modify `playbooks/inventories/post_install.yml` with the following details:
+
+| Variable | Example Value | Remarks |
+| -------- | ------------- | ------- |
+| ansible_user | root | User with root privilage |
+| ansible_host | `143.198.209.115` | Server IP address |
+| ansible_ssh_private_key_file | `~/keys/do_cartogram_key` | Public key to access the server |
+
+2. Run the script using:
+
+```
+ansible-playbook -i playbooks/inventories/post_install.yml playbooks/digitalocean_post.yml --ask-become-pass
+```
+
+Enter your password on the server when asked.
